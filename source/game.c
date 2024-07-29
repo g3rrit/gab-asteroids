@@ -5,6 +5,8 @@
 
 struct GAME_STATE game_state = {
   .level = 0,
+  .score = 0,
+  .init_count = GAME_INIT_COUNT
 };
 
 struct PLAYER player = {
@@ -59,6 +61,7 @@ void player_update(void)
   cos = fxmul(cos, float2fx(PLAYER_MOVE_SCALE));
 
   if (key_is_down(KEY_UP)) {
+    audio_play_note(1, NOTE_C, 0);
     player.obj->acc.x = fxdiv(sin, int2fx(10));
     player.obj->acc.y = fxdiv(cos, int2fx(10));
 
@@ -83,6 +86,7 @@ void shot_update(void)
     if (!key_is_down(KEY_A)) {
         return;
     }
+    audio_play_note(3, NOTE_A, 0);
     shot.is_active = 1;
     shot.is_hot = 1;
     obj_enable(shot.obj);
@@ -158,19 +162,21 @@ void asteroid_update(struct ASTEROID* as)
     }
     as->obj->pos.y = 0 - int2fx(SPRITE_OFFSET);
 
-    as->obj->vel.x = fxdiv(int2fx(qran_range(-100, 100)), ASTEROID_MOVE_SCALE);
-    as->obj->vel.y = fxdiv(int2fx(qran_range(-100, 100)), ASTEROID_MOVE_SCALE);
+    as->obj->vel.x = fxdiv(int2fx(qran_range(-100, 100)), int2fx(ASTEROID_MOVE_SCALE));
+    as->obj->vel.y = fxdiv(int2fx(qran_range(-100, 100)), int2fx(ASTEROID_MOVE_SCALE));
 
     as->rot_vel = qran_range(-100, 100);
   }
 
   if (shot.is_hot && obj_check_coll(as->obj, shot.obj)) {
+    audio_play_note(0, NOTE_C, 0);
     as->destroyed_time = -1;
     game_state.score++;
   }
 
-  if (obj_check_coll(as->obj, player.obj)) {
+  if (player.is_destroyed == 0 && obj_check_coll(as->obj, player.obj)) {
     player.is_destroyed = 1;
+    audio_play_note(0, NOTE_B, 0);
   }
 
   as->obj->rot += as->rot_vel;
@@ -181,6 +187,11 @@ void asteroid_update(struct ASTEROID* as)
 
 void game_update(void)
 {
+  if (game_state.init_count > 0) {
+    game_state.init_count--;
+    return;
+  }
+
   tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   scroll_bg();
   player_update();
@@ -191,7 +202,7 @@ void game_update(void)
   }
 
   int old_level = game_state.level;
-  game_state.level = game_state.score / 5;
+  game_state.level = game_state.score / NEXT_LEVEL_SCORE;
   game_state.level = game_state.level > MAX_LEVEL ? MAX_LEVEL : game_state.level;
   if (old_level != game_state.level) {
     audio_next();
@@ -202,11 +213,9 @@ void game_update(void)
 
   // TODO: fix size
   tte_set_pos(5, 8);
-  tte_printf("Level: %d", game_state.level);
-  tte_set_pos(140, 8);
   tte_printf("Score: %d", game_state.score);
-  //tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-  //tte_printf("#{es;P:0,0}FPS: %d:%d", fx2int(player.obj->acc.x), fx2int(player.obj->acc.y));
+  tte_set_pos(160, 8);
+  tte_printf("Level: %d", game_state.level + 1);
 }
 
 void game_init(void)
@@ -219,6 +228,7 @@ void game_init(void)
   // init game state
   game_state.level = 0;
   game_state.score = 0;
+  game_state.init_count = GAME_INIT_COUNT;
 
   // init player
   player.obj->pos.x = int2fx((SCREEN_WIDTH / 2) - SPRITE_OFFSET);

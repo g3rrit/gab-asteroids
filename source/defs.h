@@ -6,16 +6,16 @@
 #define SCREEN_WIDTH 240
 #define SCREEN_HEIGHT 160
 
-#define PLAYER_ROT_SCALE 400 // higher means faster rotation
-#define PLAYER_MOVE_SCALE 0.008 // higher means faster movement
-#define PLAYER_MAX_ACC 0.1 // higher means faster movement
+#define PLAYER_ROT_SCALE 600 // higher means faster rotation
+#define PLAYER_MOVE_SCALE 0.006 // higher means faster movement
 
-#define ACCELERATION_SCALE 100 // higher means slower deceleration
-
-#define ASTEROID_MOVE_SCALE 10000
+#define ASTEROID_MOVE_SCALE 50 // higher means lower movement
 
 #define SHOT_RELOAD_TIME 50
 
+#define OBJ_MAX_VEL2 10.0 // (squared) higher means faster movement
+
+#define NEXT_LEVEL_SCORE 1
 
 #define TILE_POS(x, y) ((x) + ((y) * 16))
 

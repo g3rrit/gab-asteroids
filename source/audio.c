@@ -32,12 +32,29 @@ vu32 const tracks[] = {
 int track_index = 0;
 int audio_active = 0;
 
+void init_audio(void)
+{
+  // turn sound on
+  REG_SNDSTAT = SSTAT_ENABLE;
+    // snd1 on left/right ; both full volume
+  REG_SNDDMGCNT = SDMG_BUILD_LR(SDMG_SQR1 | SDMG_SQR2 | SDMG_NOISE | SDMG_WAVE, 7);
+  // DMG ratio to 100%
+  //REG_SNDDSCNT= SDS_DMG100;
+  REG_SNDDSCNT = SDS_AR | SDS_AL | SDS_ARESET;
+
+  // no sweep
+  REG_SND1SWEEP= SSW_OFF;
+  // envelope: vol=12, decay, max step time (7) ; 50% duty
+  REG_SND1CNT= SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_8;
+  REG_SND2CNT= SSQR_ENV_BUILD(4, 0, 1) | SSQR_DUTY1_8;
+  REG_SND3CNT= SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_2;
+  REG_SND4CNT= SSQR_ENV_BUILD(0, 1, 1) | SSQR_DUTY1_4;
+}
+
 void audio_start(void)
 {
   audio_active = 1;
-
-  // turn sound on
-  REG_SNDSTAT = SSTAT_ENABLE;
+  return;
 
 #define CLOCK 16777216
 #define CYCLES_PER_BLANK 280806
@@ -59,9 +76,30 @@ void audio_start(void)
 void audio_stop(void)
 {
   audio_active = 0;
-
-  REG_SNDSTAT = SSTAT_DISABLE;
   REG_DMA1CNT = 0;
+}
+
+void audio_play_note(int channel, int note, int octave)
+{
+  if (audio_active == 0) {
+    return;
+  }
+
+  switch (channel) {
+    default:
+    case 0:
+      REG_SND1FREQ = SFREQ_RESET | SND_RATE(note, octave);
+      break;
+    case 1:
+      REG_SND2FREQ = SFREQ_RESET | SND_RATE(note, octave);
+      break;
+    case 2:
+      REG_SND3FREQ = SFREQ_RESET | SND_RATE(note, octave);
+      break;
+    case 3:
+      REG_SND4FREQ = SFREQ_RESET | SND_RATE(note, octave);
+      break;
+  }
 }
 
 void audio_restart(void)
@@ -69,6 +107,7 @@ void audio_restart(void)
   if (audio_active == 0) {
     return;
   }
+  return;
 
   audio_vblanks_remaining = audio_vblanks_total;
 
@@ -89,9 +128,6 @@ void audio_update(void)
   } else {
     audio_vblanks_remaining--;
   }
-  tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-  tte_set_pos(75, 50);
-  tte_printf("vblanks remaining: %d", audio_vblanks_remaining);
 }
 
 void audio_next(void)

@@ -46,6 +46,7 @@ void init(void)
   init_sprites();
   init_bg();
   init_text(); // init text last so that it writes its colors into the palette last
+  init_audio();
 }
 
 struct {

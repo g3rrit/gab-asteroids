@@ -4,10 +4,12 @@
 #include "obj.h"
 
 #define MAX_LEVEL 5
+#define GAME_INIT_COUNT 10
 
 struct GAME_STATE {
   int level;
   int score;
+  int init_count;
 };
 
 struct PLAYER {

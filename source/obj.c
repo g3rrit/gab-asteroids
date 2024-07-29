@@ -103,6 +103,17 @@ void obj_pos_update(struct OBJ* obj, int wrap)
   obj->vel.x = fxmul(obj->vel.x, obj->drag);
   obj->vel.y = fxmul(obj->vel.y, obj->drag);
 
+  // hack that keeps the velocity from getting too high
+  if (obj->drag != int2fx(1)) {
+    FIXED vel2 = fxmul(obj->vel.x, obj->vel.x) + fxmul(obj->vel.y, obj->vel.y);
+    if (vel2 > float2fx(OBJ_MAX_VEL2)) {
+      obj->vel.x = fxmul(obj->vel.x, obj->drag);
+      obj->vel.x = fxmul(obj->vel.x, obj->drag);
+      obj->vel.y = fxmul(obj->vel.y, obj->drag);
+      obj->vel.y = fxmul(obj->vel.y, obj->drag);
+    }
+  }
+
   // update pos
   v_add(&obj->pos, obj->vel.x, obj->vel.y);
 

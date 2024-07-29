@@ -33,7 +33,7 @@ void score_init(void)
   tte_write("            SCORE:\n\n");
   tte_printf("              %d\n\n\n", game_state.score);
   tte_write("            LEVEL:\n\n");
-  tte_printf("              %d\n", game_state.level);
+  tte_printf("              %d\n", game_state.level + 1);
 
   tte_set_pos(0, 140);
   tte_write("            back              ");

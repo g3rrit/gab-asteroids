@@ -31,9 +31,10 @@ void help_init(void)
   tte_set_pos(0, 20);
   tte_write(" Try to avoid the asteroids\n");
   tte_write(" by moving your spaceship\n");
-  tte_write(" with the UP key.\n");
+  tte_write(" with the UP/LEFT/RIGHT keys\n\n");
   tte_write(" Shot the asteroids by\n");
-  tte_write(" pressing A.\n\n\n");
+  tte_write(" pressing A or B\n\n");
+  tte_write(" The music gets progressively more tuneful up to level 7\n\n\n");
   tte_write("     Music inspired by\n\n");
   tte_write("   \"LOOK MOM NO COMPUTER\"");
 
