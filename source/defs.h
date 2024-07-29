@@ -15,7 +15,7 @@
 
 #define OBJ_MAX_VEL2 10.0 // (squared) higher means faster movement
 
-#define NEXT_LEVEL_SCORE 1
+#define NEXT_LEVEL_SCORE 6
 
 #define TILE_POS(x, y) ((x) + ((y) * 16))
 

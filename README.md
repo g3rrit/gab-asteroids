@@ -1,5 +1,11 @@
 # GBA Asteroids
 
+This is a Asteroids-like game for the Gameboy Advance.
+You try to shoot and dodge asteroids the
+get increasingly more common.
+
+![Game](game.png)
+
 ## Building
 
 This build requires [devkitpro](https://devkitpro.org/wiki/Getting_Started).

@@ -3,7 +3,7 @@
 
 #include "obj.h"
 
-#define MAX_LEVEL 5
+#define MAX_LEVEL 7
 #define GAME_INIT_COUNT 10
 
 struct GAME_STATE {

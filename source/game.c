@@ -83,10 +83,10 @@ void player_update(void)
 void shot_update(void)
 {
   if (!shot.is_active) {
-    if (!key_is_down(KEY_A)) {
+    if (!(key_is_down(KEY_A) | key_is_down(KEY_B))) {
         return;
     }
-    audio_play_note(3, NOTE_A, 0);
+    audio_play_note(0, NOTE_C, 2);
     shot.is_active = 1;
     shot.is_hot = 1;
     obj_enable(shot.obj);
@@ -169,14 +169,14 @@ void asteroid_update(struct ASTEROID* as)
   }
 
   if (shot.is_hot && obj_check_coll(as->obj, shot.obj)) {
-    audio_play_note(0, NOTE_C, 0);
+    audio_play_note(0, NOTE_B, 0);
     as->destroyed_time = -1;
     game_state.score++;
   }
 
   if (player.is_destroyed == 0 && obj_check_coll(as->obj, player.obj)) {
     player.is_destroyed = 1;
-    audio_play_note(0, NOTE_B, 0);
+    audio_play_note(0, NOTE_BES, 0);
   }
 
   as->obj->rot += as->rot_vel;
@@ -201,10 +201,9 @@ void game_update(void)
     asteroid_update(&asteroids[i]);
   }
 
-  int old_level = game_state.level;
-  game_state.level = game_state.score / NEXT_LEVEL_SCORE;
-  game_state.level = game_state.level > MAX_LEVEL ? MAX_LEVEL : game_state.level;
-  if (old_level != game_state.level) {
+  int new_level = game_state.score / (NEXT_LEVEL_SCORE + game_state.level);
+  if (new_level > game_state.level) {
+    game_state.level = new_level;
     audio_next();
   }
 

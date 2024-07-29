@@ -4,6 +4,7 @@
 #include "obj.h"
 #include "cursor.h"
 #include "game.h"
+#include "audio.h"
 
 #define CURSOR_AT_BACK 124
 
@@ -14,6 +15,7 @@ void score_update(void)
   obj_tile_update(cursor.obj);
 
   if (key_was_up(KEY_A) && key_is_down(KEY_A)) {
+    audio_play_note(1, NOTE_C, 1);
     scene = SCENE_MENU;
   }
 

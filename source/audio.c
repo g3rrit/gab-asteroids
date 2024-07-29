@@ -36,25 +36,21 @@ void init_audio(void)
 {
   // turn sound on
   REG_SNDSTAT = SSTAT_ENABLE;
-    // snd1 on left/right ; both full volume
-  REG_SNDDMGCNT = SDMG_BUILD_LR(SDMG_SQR1 | SDMG_SQR2 | SDMG_NOISE | SDMG_WAVE, 7);
+  // snd1 on left/right ; both full volume
+  REG_SNDDMGCNT = SDMG_BUILD_LR(SDMG_SQR1 | SDMG_SQR2, 7);
   // DMG ratio to 100%
-  //REG_SNDDSCNT= SDS_DMG100;
-  REG_SNDDSCNT = SDS_AR | SDS_AL | SDS_ARESET;
+  REG_SNDDSCNT = SDS_AR | SDS_AL | SDS_ARESET | SDS_DMG100;
 
   // no sweep
   REG_SND1SWEEP= SSW_OFF;
-  // envelope: vol=12, decay, max step time (7) ; 50% duty
-  REG_SND1CNT= SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_8;
-  REG_SND2CNT= SSQR_ENV_BUILD(4, 0, 1) | SSQR_DUTY1_8;
-  REG_SND3CNT= SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_2;
-  REG_SND4CNT= SSQR_ENV_BUILD(0, 1, 1) | SSQR_DUTY1_4;
+
+  REG_SND1CNT= SSQR_ENV_BUILD(12, 0, 2) | SSQR_DUTY1_8;
+  REG_SND2CNT= SSQR_ENV_BUILD(7, 0, 1) | SSQR_DUTY1_8;
 }
 
 void audio_start(void)
 {
   audio_active = 1;
-  return;
 
 #define CLOCK 16777216
 #define CYCLES_PER_BLANK 280806
@@ -81,10 +77,6 @@ void audio_stop(void)
 
 void audio_play_note(int channel, int note, int octave)
 {
-  if (audio_active == 0) {
-    return;
-  }
-
   switch (channel) {
     default:
     case 0:
@@ -92,12 +84,6 @@ void audio_play_note(int channel, int note, int octave)
       break;
     case 1:
       REG_SND2FREQ = SFREQ_RESET | SND_RATE(note, octave);
-      break;
-    case 2:
-      REG_SND3FREQ = SFREQ_RESET | SND_RATE(note, octave);
-      break;
-    case 3:
-      REG_SND4FREQ = SFREQ_RESET | SND_RATE(note, octave);
       break;
   }
 }
@@ -107,7 +93,6 @@ void audio_restart(void)
   if (audio_active == 0) {
     return;
   }
-  return;
 
   audio_vblanks_remaining = audio_vblanks_total;
 

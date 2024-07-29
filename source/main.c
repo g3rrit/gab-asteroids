@@ -74,7 +74,6 @@ int main(void)
 
     if (old_scene != scene) {
       tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-      audio_stop();
       SCENES[scene].init();
       old_scene = scene;
     }
