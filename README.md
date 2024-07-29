@@ -2,7 +2,7 @@
 
 ## Building
 
-This build requires [butano](https://github.com/GValiente/butano) as well as [devkitpro](https://devkitpro.org/wiki/Getting_Started).
+This build requires [devkitpro](https://devkitpro.org/wiki/Getting_Started).
 
 On mac devkitpro can be installed via the `pkg` distribution:
 
@@ -16,12 +16,13 @@ Afterwards `devkitARM` can be installed:
 pacman -S gba-dev
 ```
 
-Butano can simply be cloned. It contains a template project in the `template` directory.
-
 Additionally the following environment variables should be set:
 
 ```sh
 export DEVKITPRO="/opt/devkitpro"
 export DEVKITARM="/opt/devkitpro/devkitARM"
-export LIBBUTANOABS="~/opt/butano/butano"
 ```
+
+## Notes:
+
+- `VBlankIntrWait()` will wait until vblank and only wait again after one execution, so this can be used for timing
