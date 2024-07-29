@@ -1,9 +1,10 @@
 #include "game.h"
 
 #include "cmn.h"
+#include "audio.h"
 
 struct GAME_STATE game_state = {
-  .as_count = 0,
+  .level = 0,
 };
 
 struct PLAYER player = {
@@ -39,7 +40,7 @@ void player_update(void)
 {
   if (player.is_destroyed) {
     if (player.obj->tile >= TILE_PLAYER_DESTROY_END) {
-      scene = SCENE_MENU;
+      scene = SCENE_SCORE;
       return;
     }
 
@@ -165,6 +166,7 @@ void asteroid_update(struct ASTEROID* as)
 
   if (shot.is_hot && obj_check_coll(as->obj, shot.obj)) {
     as->destroyed_time = -1;
+    game_state.score++;
   }
 
   if (obj_check_coll(as->obj, player.obj)) {
@@ -179,30 +181,44 @@ void asteroid_update(struct ASTEROID* as)
 
 void game_update(void)
 {
+  tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   scroll_bg();
   player_update();
   shot_update();
 
-  for (int i = 0; i < game_state.as_count; i++) {
+  for (int i = 0; i < game_state.level + 2; i++) {
     asteroid_update(&asteroids[i]);
+  }
+
+  int old_level = game_state.level;
+  game_state.level = game_state.score / 5;
+  game_state.level = game_state.level > MAX_LEVEL ? MAX_LEVEL : game_state.level;
+  if (old_level != game_state.level) {
+    audio_next();
   }
 
   obj_copy(obj_mem, obj_buffer, OBJ_COUNT);
   obj_aff_copy(obj_aff_mem, obj_aff_buffer, OBJ_COUNT);
 
   // TODO: fix size
+  tte_set_pos(5, 8);
+  tte_printf("Level: %d", game_state.level);
+  tte_set_pos(140, 8);
+  tte_printf("Score: %d", game_state.score);
   //tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   //tte_printf("#{es;P:0,0}FPS: %d:%d", fx2int(player.obj->acc.x), fx2int(player.obj->acc.y));
 }
 
 void game_init(void)
 {
-  //tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  audio_reset();
+  audio_start();
   objs_disable();
   sqran(timer);
 
   // init game state
-  game_state.as_count = 2;
+  game_state.level = 0;
+  game_state.score = 0;
 
   // init player
   player.obj->pos.x = int2fx((SCREEN_WIDTH / 2) - SPRITE_OFFSET);

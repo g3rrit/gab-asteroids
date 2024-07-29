@@ -1,0 +1,3 @@
+[submodule "raw2gba"]
+	path = raw2gba
+	url = git@github.com:IanFinlayson/raw2gba.git

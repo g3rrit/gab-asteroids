@@ -2,10 +2,12 @@
 
 #include "cmn.h"
 #include "obj.h"
+#include "cursor.h"
 
-struct CURSOR cursor = {
-  .obj = &objs[2]
-};
+#define CURSOR_AT_START 53
+#define CURSOR_AT_HELP 78
+
+int hover_start = 1;
 
 void menu_update(void)
 {
@@ -14,7 +16,23 @@ void menu_update(void)
   obj_tile_update(cursor.obj);
 
   if (key_was_up(KEY_A) && key_is_down(KEY_A)) {
-    scene = SCENE_GAME;
+    if (hover_start) {
+      scene = SCENE_GAME;
+    } else {
+      scene = SCENE_HELP;
+    }
+  }
+
+  if (key_was_up(KEY_DOWN) && key_is_down(KEY_DOWN)) {
+    cursor.obj->pos.y = int2fx(CURSOR_AT_HELP);
+    obj_pos_update(cursor.obj, 0);
+    hover_start = 0;
+  }
+
+  if (key_was_up(KEY_UP) && key_is_down(KEY_UP)) {
+    cursor.obj->pos.y = int2fx(CURSOR_AT_START);
+    obj_pos_update(cursor.obj, 0);
+    hover_start = 1;
   }
 
   obj_copy(obj_mem, obj_buffer, OBJ_COUNT);
@@ -22,18 +40,20 @@ void menu_update(void)
 
 void menu_init(void)
 {
-  //tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  hover_start = 1;
   objs_disable();
 
   obj_enable(cursor.obj);
   cursor.obj->pos.x = int2fx(SCREEN_WIDTH / 2 - 60);
-  cursor.obj->pos.y = int2fx(51);
+  cursor.obj->pos.y = int2fx(CURSOR_AT_START);
   obj_pos_update(cursor.obj, 0);
 
-  //tte_set_pos(75, 30);
-  //tte_write("< ASTEROIDS >");
+  tte_set_pos(0, 30);
+  tte_write("        < ASTEROIDS >        ");
 
-  //tte_set_pos(95, 60);
-  //tte_write("start");
+  tte_set_pos(0, 70);
+  tte_write("            start             ");
 
+  tte_set_pos(0, 95);
+  tte_write("            help              ");
 }

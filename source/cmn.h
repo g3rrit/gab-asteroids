@@ -15,6 +15,8 @@ enum SCENE {
   SCENE_START = -1,
   SCENE_MENU = 0,
   SCENE_GAME = 1,
+  SCENE_HELP = 2,
+  SCENE_SCORE = 3,
 };
 
 extern enum SCENE scene;

@@ -3,6 +3,10 @@
 #include "obj.h"
 #include "game.h"
 #include "menu.h"
+#include "help.h"
+#include "score.h"
+
+#include "audio.h"
 
 void init_sprites(void)
 {
@@ -17,19 +21,18 @@ void init_sprites(void)
 
 void init_bg(void)
 {
-  memcpy32(&tile_mem[1][0], bgTiles, bgTilesLen / 4);
+  memcpy32(&tile_mem[2][0], bgTiles, bgTilesLen / 4);
   memcpy32(pal_bg_mem, bgPal, bgPalLen / 4);
-  REG_BG0CNT = BG_CBB(1) | BG_SBB(16) | BG_8BPP | BG_REG_32x32;
+  REG_BG1CNT = BG_CBB(2) | BG_SBB(24) | BG_8BPP | BG_REG_32x32;
   for (int i = 0; i < 32 * 32; i++) {
-    se_mem[16][i] = qran_range(0, 64);
+    se_mem[24][i] = qran_range(0, 64);
   }
 }
 
 void init_text(void)
 {
-  //tte_init_chr4c_b4_default(0, BG_CBB(0) | BG_SBB(28));
-  //tte_init_con();
-  //tte_set_margins(8, 128, 232, 160);
+  tte_init_se_default(0, BG_CBB(0) | BG_SBB(8) | BG_PRIO(0));
+  tte_init_con();
 }
 
 void init(void)
@@ -48,9 +51,11 @@ void init(void)
 struct {
   void (*init)(void);
   void (*update)(void);
-} SCENES[2] = {
+} SCENES[4] = {
   {menu_init, menu_update},
   {game_init, game_update},
+  {help_init, help_update},
+  {score_init, score_update},
 };
 
 int main(void)
@@ -62,9 +67,13 @@ int main(void)
     timer_last = timer;
     timer++;
 
+    audio_update();
+
     key_poll();
 
     if (old_scene != scene) {
+      tte_erase_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+      audio_stop();
       SCENES[scene].init();
       old_scene = scene;
     }

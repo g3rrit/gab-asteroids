@@ -3,8 +3,11 @@
 
 #include "obj.h"
 
+#define MAX_LEVEL 5
+
 struct GAME_STATE {
-  int as_count;
+  int level;
+  int score;
 };
 
 struct PLAYER {

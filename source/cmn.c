@@ -12,6 +12,6 @@ void scroll_bg(void)
   static int y;
   x += TIMER(32) * 1;
   y += TIMER(32) * 1;
-  REG_BG0HOFS = x;
-  REG_BG0VOFS = y;
+  REG_BG1HOFS = x;
+  REG_BG1VOFS = y;
 }
