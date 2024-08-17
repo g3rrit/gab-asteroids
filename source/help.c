@@ -39,7 +39,7 @@ void help_init(void)
   tte_write(" pressing A or B\n\n");
   tte_write(" The music gets progressively more tuneful up to level 7\n\n\n");
   tte_write("     Music inspired by\n\n");
-  tte_write("   \"LOOK MOM NO COMPUTER\"");
+  tte_write("   \"LOOK MUM NO COMPUTER\"");
 
 
   tte_set_pos(0, 140);
